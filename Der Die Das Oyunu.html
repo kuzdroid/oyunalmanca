@@ -1,0 +1,380 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Der Die Das Oyunu</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800;900&display=swap">
+<style>
+/* Layout: one-screen arcade stage on grid paper; word card drops in and bounces, three colour-coded article buttons below */
+:root{
+  --paper:#eef5ff; --grid:#d3e3fa; --ink:#14213d; --muted:#5b6b8c; --card:#ffffff;
+  --der:#2f6fec; --die:#e8434f; --das:#20a86b; --gold:#ffb627; --shadow:rgba(20,33,61,.18);
+  --display:"Lilita One","Arial Rounded MT Bold","Trebuchet MS",sans-serif;
+  --body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#101a33; --grid:#1b2a4d; --ink:#eef3ff; --muted:#9fb0d4; --card:#1a2747;
+  --der:#4d86ff; --die:#ff5a66; --das:#2fc483; --gold:#ffc54d; --shadow:rgba(0,0,0,.45); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#101a33; --grid:#1b2a4d; --ink:#eef3ff; --muted:#9fb0d4; --card:#1a2747;
+  --der:#4d86ff; --die:#ff5a66; --das:#2fc483; --gold:#ffc54d; --shadow:rgba(0,0,0,.45); color-scheme:dark}
+html,body{height:100%}
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:28px 28px;
+  color:var(--ink); font-family:var(--body); overflow:hidden;
+  -webkit-tap-highlight-color:transparent; user-select:none;
+}
+.stage{height:100%;display:flex;flex-direction:column;align-items:center;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px;box-sizing:border-box}
+.screen{width:100%;max-width:560px;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;min-height:0}
+button{font-family:var(--body);cursor:pointer;border:0}
+button:focus-visible{outline:4px solid var(--gold);outline-offset:3px}
+
+/* ---------- Intro ---------- */
+#intro{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  background:var(--paper);z-index:20;transition:opacity .5s ease}
+#intro.out{opacity:0;pointer-events:none}
+.logo{display:flex;font-family:var(--display);font-size:clamp(44px,13vw,96px);line-height:1;letter-spacing:.01em}
+.logo span{display:inline-block;transform:translateY(-120vh);animation:drop 1.15s forwards;
+  text-shadow:0 5px 0 var(--shadow)}
+.logo span:nth-child(5n+1){color:var(--der)} .logo span:nth-child(5n+2){color:var(--die)}
+.logo span:nth-child(5n+3){color:var(--das)} .logo span:nth-child(5n+4){color:var(--gold)}
+.logo span:nth-child(5n){color:var(--ink)}
+.logo .gap{width:.25em}
+@keyframes drop{
+  0%{transform:translateY(-120vh) scale(1,1)}
+  45%{transform:translateY(0) scale(1.15,.82);animation-timing-function:cubic-bezier(.2,.7,.4,1)}
+  62%{transform:translateY(-28%) scale(.95,1.06);animation-timing-function:cubic-bezier(.6,0,.8,.4)}
+  76%{transform:translateY(0) scale(1.08,.9);animation-timing-function:cubic-bezier(.2,.7,.4,1)}
+  86%{transform:translateY(-9%) scale(1,1);animation-timing-function:cubic-bezier(.6,0,.8,.4)}
+  94%{transform:translateY(0) scale(1.03,.97)}
+  100%{transform:translateY(0) scale(1,1)}
+}
+.presents{font-weight:800;color:var(--muted);letter-spacing:.3em;text-transform:uppercase;font-size:13px;opacity:0;animation:fade .6s 1.9s forwards}
+@keyframes fade{to{opacity:1}}
+.skip{position:absolute;bottom:calc(20px + env(safe-area-inset-bottom,0px));font-size:13px;color:var(--muted);font-weight:700}
+
+/* ---------- Menu ---------- */
+.title{font-family:var(--display);font-size:clamp(46px,14vw,84px);line-height:.95;text-align:center;margin:0;text-wrap:balance}
+.title .a{color:var(--der)} .title .b{color:var(--die)} .title .c{color:var(--das)}
+.sub{margin:0;color:var(--muted);font-weight:700;text-align:center;max-width:34ch}
+.sets{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%}
+.set{background:var(--card);color:var(--ink);border-radius:16px;padding:14px 8px;font-weight:800;font-size:15px;
+  box-shadow:0 4px 0 var(--shadow);border:3px solid transparent;display:flex;flex-direction:column;gap:2px;align-items:center}
+.set small{font-weight:700;color:var(--muted);font-size:12px}
+.set[aria-pressed="true"]{border-color:var(--ink)}
+.set .dot{width:12px;height:12px;border-radius:50%;margin-bottom:4px}
+.big{font-family:var(--display);font-size:28px;letter-spacing:.02em;padding:14px 44px;border-radius:18px;
+  background:var(--gold);color:#14213d;box-shadow:0 6px 0 #c98a00;transition:transform .08s}
+.big:active{transform:translateY(4px);box-shadow:0 2px 0 #c98a00}
+.rules{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.chip{font-weight:800;font-size:13px;padding:6px 10px;border-radius:999px;color:#fff}
+.best{font-weight:800;color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}
+
+/* ---------- Game ---------- */
+.hud{width:100%;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:900;font-variant-numeric:tabular-nums}
+.pill{background:var(--card);padding:8px 14px;border-radius:999px;box-shadow:0 3px 0 var(--shadow);font-size:15px;white-space:nowrap}
+.streak{color:var(--die)}
+.icon-btn{background:var(--card);color:var(--ink);width:40px;height:40px;border-radius:50%;box-shadow:0 3px 0 var(--shadow);font-size:18px;display:grid;place-items:center}
+.bar{width:100%;height:10px;background:var(--card);border-radius:999px;overflow:hidden;box-shadow:inset 0 1px 2px var(--shadow)}
+.bar i{display:block;height:100%;width:0;background:var(--gold);border-radius:999px;transition:width .3s}
+.arena{flex:1;width:100%;display:flex;align-items:center;justify-content:center;min-height:180px;position:relative}
+.card{background:var(--card);border-radius:24px;padding:28px 22px 22px;width:100%;box-shadow:0 10px 0 var(--shadow);
+  text-align:center;border:4px solid transparent;transition:border-color .2s,background .2s}
+.card.drop{animation:cardDrop .75s both}
+@keyframes cardDrop{
+  0%{transform:translateY(-70vh)}
+  55%{transform:translateY(0) scale(1.06,.92);animation-timing-function:ease-out}
+  72%{transform:translateY(-14px) scale(.98,1.03);animation-timing-function:ease-in}
+  88%{transform:translateY(0) scale(1.02,.98)}
+  100%{transform:none}
+}
+.card.shake{animation:shake .45s}
+@keyframes shake{20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
+.card.pop{animation:pop .35s}
+@keyframes pop{50%{transform:scale(1.06)}}
+.art{font-family:var(--display);font-size:clamp(30px,8vw,40px);height:1.1em;color:var(--muted);letter-spacing:.02em}
+.word{font-family:var(--display);font-size:clamp(42px,12vw,68px);line-height:1.05;margin:4px 0 6px;overflow-wrap:anywhere}
+.tr{font-weight:800;color:var(--muted);font-size:17px;min-height:1.4em}
+.ex{margin-top:10px;font-weight:800;font-size:16px;min-height:1.4em}
+.ex b{font-weight:900}
+.answers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%}
+.ans{font-family:var(--display);font-size:clamp(28px,8vw,40px);color:#fff;padding:18px 0 14px;border-radius:20px;
+  transition:transform .08s,opacity .2s;display:flex;flex-direction:column;align-items:center;gap:2px}
+.ans small{font-family:var(--body);font-size:12px;font-weight:800;opacity:.85}
+.ans[data-a="der"]{background:var(--der);box-shadow:0 7px 0 color-mix(in srgb,var(--der) 60%,#000)}
+.ans[data-a="die"]{background:var(--die);box-shadow:0 7px 0 color-mix(in srgb,var(--die) 60%,#000)}
+.ans[data-a="das"]{background:var(--das);box-shadow:0 7px 0 color-mix(in srgb,var(--das) 60%,#000)}
+.ans:active{transform:translateY(5px)}
+.ans:disabled{opacity:.35;cursor:default}
+.ans.right{opacity:1;outline:5px solid var(--gold);outline-offset:3px}
+.next{font-weight:900;font-size:16px;padding:12px 26px;border-radius:14px;background:var(--ink);color:var(--paper)}
+.float{position:absolute;font-family:var(--display);font-size:34px;color:var(--gold);pointer-events:none;animation:up .9s forwards;text-shadow:0 3px 0 var(--shadow)}
+@keyframes up{to{transform:translateY(-80px);opacity:0}}
+
+/* ---------- End ---------- */
+.stars{font-size:52px;letter-spacing:6px}
+.score{font-family:var(--display);font-size:64px;line-height:1}
+.miss{width:100%;background:var(--card);border-radius:18px;padding:14px 16px;box-shadow:0 4px 0 var(--shadow);max-height:34vh;overflow:auto;box-sizing:border-box}
+.miss h3{margin:0 0 8px;font-size:15px;color:var(--muted)}
+.miss ul{margin:0;padding:0;list-style:none;display:grid;gap:6px}
+.miss li{font-weight:800;display:flex;justify-content:space-between;gap:10px}
+.miss li span:last-child{color:var(--muted);text-align:right}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.sec{font-weight:900;font-size:16px;padding:12px 20px;border-radius:14px;background:var(--card);color:var(--ink);box-shadow:0 4px 0 var(--shadow)}
+.foot{font-size:12px;color:var(--muted);font-weight:700}
+
+@media (prefers-reduced-motion: reduce){
+  .logo span,.card.drop,.card.shake,.card.pop,.float{animation-duration:.01s!important}
+}
+</style>
+
+<div id="intro" role="button" tabindex="0" aria-label="Girişi geç">
+  <div class="logo" id="logo" aria-label="KuzStudios"></div>
+  <div class="presents">sunar</div>
+  <div class="skip">Geçmek için dokun</div>
+</div>
+
+<main class="stage">
+  <!-- MENU -->
+  <section class="screen" id="menu">
+    <h1 class="title"><span class="a">Der</span> <span class="b">Die</span> <span class="c">Das</span></h1>
+    <p class="sub">Kelime düşüyor, artikelini sen yakala! Doğru cevapta "Es gibt" cümlesini de görürsün.</p>
+    <div class="sets" role="group" aria-label="Kelime grubu">
+      <button class="set" id="set-haus" data-set="haus" aria-pressed="false"><span class="dot" style="background:var(--die)"></span>Ev<small>Ort &amp; Haus</small></button>
+      <button class="set" id="set-stadt" data-set="stadt" aria-pressed="false"><span class="dot" style="background:var(--das)"></span>Şehir<small>Die Stadt</small></button>
+      <button class="set" id="set-alle" data-set="alle" aria-pressed="true"><span class="dot" style="background:var(--gold)"></span>Hepsi<small>Karışık</small></button>
+    </div>
+    <button class="big" id="play">OYNA</button>
+    <div class="rules">
+      <span class="chip" style="background:var(--der)">der → einen</span>
+      <span class="chip" style="background:var(--die)">die → eine</span>
+      <span class="chip" style="background:var(--das)">das → ein</span>
+    </div>
+    <div class="best" id="best"></div>
+    <div class="foot">Klavye: 1 = der · 2 = die · 3 = das · Enter = devam</div>
+  </section>
+
+  <!-- GAME -->
+  <section class="screen" id="game" hidden>
+    <div class="hud">
+      <button class="icon-btn" id="home" aria-label="Menüye dön">⌂</button>
+      <span class="pill" id="count">1 / 15</span>
+      <span class="pill streak" id="streak">🔥 0</span>
+      <span class="pill" id="pts">0 puan</span>
+      <button class="icon-btn" id="mute" aria-label="Sesi kapat">🔊</button>
+    </div>
+    <div class="bar"><i id="prog"></i></div>
+    <div class="arena" id="arena">
+      <div class="card" id="card">
+        <div class="art" id="art">???</div>
+        <div class="word" id="word">Haus</div>
+        <div class="tr" id="tr"></div>
+        <div class="ex" id="ex"></div>
+      </div>
+    </div>
+    <div class="answers">
+      <button class="ans" data-a="der">der<small>1</small></button>
+      <button class="ans" data-a="die">die<small>2</small></button>
+      <button class="ans" data-a="das">das<small>3</small></button>
+    </div>
+    <button class="next" id="next" hidden>Devam →</button>
+  </section>
+
+  <!-- END -->
+  <section class="screen" id="end" hidden>
+    <div class="stars" id="stars">⭐⭐⭐</div>
+    <div class="score" id="final">0</div>
+    <p class="sub" id="msg"></p>
+    <div class="miss" id="missBox">
+      <h3>Bunları tekrar çalış</h3>
+      <ul id="missList"></ul>
+    </div>
+    <div class="row">
+      <button class="big" id="retryMiss">Hatalarımı oyna</button>
+      <button class="sec" id="again">Yeniden oyna</button>
+      <button class="sec" id="toMenu">Menü</button>
+    </div>
+  </section>
+</main>
+
+<script>
+// Kelimeler: Ömer'in çalışma kağıdındaki kırmızı ve yeşil sütunlar
+const WORDS = [
+  // Ort & Haus
+  ["das","Haus","ev","haus"],["der","Garten","bahçe","haus"],["der","Balkon","balkon","haus"],
+  ["das","Zimmer","oda","haus"],["das","Wohnzimmer","oturma odası","haus"],["das","Schlafzimmer","yatak odası","haus"],
+  ["das","Esszimmer","yemek odası","haus"],["das","Kinderzimmer","çocuk odası","haus"],["das","Sitzzimmer","oturma odası","haus"],
+  ["das","Malzimmer","resim odası","haus"],["das","Bad","banyo","haus"],["die","Küche","mutfak","haus"],
+  ["das","Fenster","pencere","haus"],["die","Tür","kapı","haus"],["der","Tisch","masa","haus"],
+  ["der","Stuhl","sandalye","haus"],["der","Schrank","dolap","haus"],["das","Bett","yatak","haus"],
+  ["das","Regal","raf","haus"],["das","Bild","resim","haus"],["die","Lampe","lamba","haus"],
+  ["der","Teppich","halı","haus"],["der","Computer","bilgisayar","haus"],["der","Stift","kalem","haus"],
+  ["das","Buch","kitap","haus"],["die","Spielsachen","oyuncaklar (çoğul)","haus"],
+  // Die Stadt
+  ["die","Stadt","şehir","stadt"],["der","Bahnhof","tren istasyonu","stadt"],["die","U-Bahn","metro","stadt"],
+  ["die","Straßenbahn","tramvay","stadt"],["der","Bus","otobüs","stadt"],["die","Straße","cadde, sokak","stadt"],
+  ["der","Platz","meydan","stadt"],["der","Zoo","hayvanat bahçesi","stadt"],["der","Park","park","stadt"],
+  ["das","Stadion","stadyum","stadt"],["das","Schwimmbad","yüzme havuzu","stadt"],["die","Wohnung","daire, ev","stadt"],
+  ["die","Schule","okul","stadt"],["der","Hof","avlu, bahçe","stadt"],["die","Bibliothek","kütüphane","stadt"],
+  ["die","Sporthalle","spor salonu","stadt"],["das","Wetter","hava durumu","stadt"]
+].map(([a,w,t,s])=>({a,w,t,s}));
+
+const INDEF = {der:"einen",die:"eine",das:"ein"};
+function example(x){
+  if(x.w==="Spielsachen") return `Es gibt <b>Spielsachen</b>. <span style="color:var(--muted)">(çoğulda "bir" yok)</span>`;
+  if(x.w==="Wetter") return `<b>Das Wetter</b> ist super!`;
+  return `Es gibt <b style="color:var(--${x.a})">${INDEF[x.a]}</b> ${x.w}.`;
+}
+
+const $ = id => document.getElementById(id);
+const store = {
+  get(k){try{return localStorage.getItem(k)}catch(e){return null}},
+  set(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+};
+
+/* ---------- Ses ---------- */
+let actx=null, muted = store.get("dda-muted")==="1";
+function beep(freqs,dur=.12,type="triangle",gap=.09){
+  if(muted) return;
+  try{
+    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    freqs.forEach((f,i)=>{
+      const o=actx.createOscillator(), g=actx.createGain(), t=actx.currentTime+i*gap;
+      o.type=type; o.frequency.value=f;
+      g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.25,t+.01); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+      o.connect(g).connect(actx.destination); o.start(t); o.stop(t+dur+.02);
+    });
+  }catch(e){}
+}
+const sfx = {
+  right:()=>beep([660,880]), wrong:()=>beep([220,165],.2,"square",.12),
+  land:()=>beep([140],.08,"sine"), win:()=>beep([523,659,784,1047],.18,"triangle",.12)
+};
+function setMuteIcon(){ $("mute").textContent = muted?"🔇":"🔊"; $("mute").setAttribute("aria-label",muted?"Sesi aç":"Sesi kapat"); }
+
+/* ---------- Intro (KuzStudios düşüp seker) ---------- */
+(function intro(){
+  const name="KuzStudios"; const logo=$("logo");
+  [...name].forEach((ch,i)=>{
+    const s=document.createElement("span"); s.textContent=ch;
+    s.style.animationDelay=(i*0.09)+"s"; logo.appendChild(s);
+  });
+  let done=false;
+  const finish=()=>{ if(done) return; done=true; $("intro").classList.add("out"); setTimeout(()=>$("intro").hidden=true,520); };
+  $("intro").addEventListener("click",finish);
+  $("intro").addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" ") finish(); });
+  setTimeout(finish,3400);
+})();
+
+/* ---------- Oyun durumu ---------- */
+let chosenSet="alle", deck=[], idx=0, points=0, streak=0, bestStreak=0, correct=0, misses=[], locked=false, lastDeckSource=[];
+
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function show(id){ ["menu","game","end"].forEach(s=>$(s).hidden = s!==id); }
+function renderBest(){ const b=store.get("dda-best"); $("best").textContent = b?`En yüksek puanın: ${b}`:""; }
+
+document.querySelectorAll(".set").forEach(b=>b.addEventListener("click",()=>{
+  chosenSet=b.dataset.set;
+  document.querySelectorAll(".set").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));
+  beep([520],.07);
+}));
+
+function startGame(source){
+  lastDeckSource = source;
+  deck = shuffle(source).slice(0, Math.min(15, source.length));
+  idx=0; points=0; streak=0; bestStreak=0; correct=0; misses=[];
+  show("game"); nextWord();
+}
+function poolFor(set){ return set==="alle"?WORDS:WORDS.filter(w=>w.s===set); }
+
+$("play").addEventListener("click",()=>startGame(poolFor(chosenSet)));
+$("again").addEventListener("click",()=>startGame(poolFor(chosenSet)));
+$("retryMiss").addEventListener("click",()=>startGame(misses.slice()));
+$("toMenu").addEventListener("click",()=>{renderBest();show("menu")});
+$("home").addEventListener("click",()=>{renderBest();show("menu")});
+$("mute").addEventListener("click",()=>{muted=!muted;store.set("dda-muted",muted?"1":"0");setMuteIcon()});
+
+function updateHud(){
+  $("count").textContent=`${Math.min(idx+1,deck.length)} / ${deck.length}`;
+  $("streak").textContent=`🔥 ${streak}`;
+  $("pts").textContent=`${points} puan`;
+  $("prog").style.width=(idx/deck.length*100)+"%";
+}
+
+function nextWord(){
+  if(idx>=deck.length) return endGame();
+  locked=false;
+  const x=deck[idx], card=$("card");
+  $("art").textContent="???"; $("art").style.color="";
+  $("word").textContent=x.w; $("tr").textContent=""; $("ex").innerHTML="";
+  card.style.borderColor="transparent";
+  document.querySelectorAll(".ans").forEach(b=>{b.disabled=false;b.classList.remove("right")});
+  $("next").hidden=true;
+  card.className="card"; void card.offsetWidth; card.classList.add("drop");
+  setTimeout(sfx.land,400);
+  updateHud();
+}
+
+let autoTimer=null;
+function answer(a){
+  if(locked || $("game").hidden) return;
+  locked=true;
+  const x=deck[idx], card=$("card"), ok = a===x.a;
+  $("art").textContent=x.a; $("art").style.color=`var(--${x.a})`;
+  $("tr").textContent = x.t;
+  $("ex").innerHTML = example(x);
+  card.style.borderColor=`var(--${x.a})`;
+  document.querySelectorAll(".ans").forEach(b=>{ b.disabled=true; if(b.dataset.a===x.a) b.classList.add("right"); });
+  card.className="card"; void card.offsetWidth;
+  if(ok){
+    streak++; bestStreak=Math.max(bestStreak,streak); correct++;
+    const gain = 10 + Math.min(streak-1,5)*2;
+    points+=gain; card.classList.add("pop"); sfx.right(); floatText("+"+gain);
+    autoTimer=setTimeout(go,1300);
+  }else{
+    streak=0; misses.push(x); card.classList.add("shake"); sfx.wrong();
+    $("next").hidden=false; $("next").focus({preventScroll:true});
+  }
+  updateHud();
+}
+function go(){ clearTimeout(autoTimer); if(!locked) return; idx++; nextWord(); }
+$("next").addEventListener("click",go);
+$("card").addEventListener("click",()=>{ if(locked) go(); });
+
+function floatText(t){
+  const f=document.createElement("div"); f.className="float"; f.textContent=t;
+  f.style.top="10%"; f.style.right="8%"; $("arena").appendChild(f); setTimeout(()=>f.remove(),950);
+}
+
+document.querySelectorAll(".ans").forEach(b=>b.addEventListener("click",()=>answer(b.dataset.a)));
+document.addEventListener("keydown",e=>{
+  if($("game").hidden) return;
+  if(e.key==="1") answer("der"); else if(e.key==="2") answer("die"); else if(e.key==="3") answer("das");
+  else if((e.key==="Enter"||e.key===" ") && locked){ e.preventDefault(); go(); }
+});
+
+function endGame(){
+  $("prog").style.width="100%";
+  const ratio = correct/deck.length;
+  const stars = ratio>=.9?3: ratio>=.6?2: ratio>0?1:0;
+  $("stars").textContent = "⭐".repeat(stars) + "☆".repeat(3-stars);
+  $("final").textContent = points;
+  const msgs = ["Olsun, tekrar dene! Artikeller ezberle gelir.","İyi gidiyorsun! Biraz daha pratik.","Harika! Neredeyse hepsi doğru.","Mükemmel! Artikel ustasısın! 🏆"];
+  $("msg").textContent = `${deck.length} kelimede ${correct} doğru · en uzun seri 🔥${bestStreak}. ${msgs[stars]}`;
+  const best = +store.get("dda-best")||0;
+  if(points>best){ store.set("dda-best",points); $("msg").textContent += " Yeni rekor!"; }
+  const ul=$("missList"); ul.innerHTML="";
+  misses.forEach(m=>{ const li=document.createElement("li");
+    li.innerHTML=`<span><span style="color:var(--${m.a})">${m.a}</span> ${m.w}</span><span>${m.t}</span>`; ul.appendChild(li); });
+  $("missBox").hidden = misses.length===0;
+  $("retryMiss").hidden = misses.length===0;
+  show("end"); if(stars>=2) sfx.win();
+}
+
+setMuteIcon(); renderBest();
+</script>
+
+</body></html>

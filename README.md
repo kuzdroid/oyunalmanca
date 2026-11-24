@@ -1,0 +1,2 @@
+# oyunalmanca
+alamanca
